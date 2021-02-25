@@ -692,6 +692,23 @@ class FddApi3 implements FddInterface
         );
     }
 
+    private function getAuthMsgDigest(string $customer_id, array $parameter_map = []): string
+    {
+        return base64_encode(
+            strtoupper(
+                sha1(
+                    $this->appId
+                    . strtoupper(md5($parameter_map['transaction_id'].$this->timestamp))
+                    . strtoupper(
+                        sha1(
+                            $this->appSecret . $customer_id
+                        )
+                    )
+                )
+            )
+        );
+    }
+
     /**
      * 获取公共参数
      * @param string $msg_digest
@@ -726,15 +743,20 @@ class FddApi3 implements FddInterface
     /**
      * 授权接口
      *
-     * @param $template_id
+     * @param   string    $transaction_id       交易号
+     * @param   int       $auth_type            授权类型
+     * @param   string    $contract_id          合同编号
+     * @param   string    $customer_id          客户编号
+     * @param   string    $return_url           页面跳转URL(签署结果同步通知)
+     * @param   string    $notify_url           授权结果异步通知URL
      * @return string
      * @author bonzaphp@gmail.com
      */
     public function authSign(string $transaction_id, int $auth_type, string $contract_id, string $customer_id, string $return_url, string $notify_url): string
     {
         $personalParams = compact('transaction_id', 'auth_type', 'contract_id', 'customer_id', 'return_url', 'notify_url');
-        $msg_digest = $this->getMsgDigest($personalParams);
+        $msg_digest = $this->getAuthMsgDigest($customer_id, $personalParams);
         $params = array_merge($this->getCommonParams($msg_digest) , $personalParams);
         return $this->baseUrl . 'before_authsign' . '.api' . '?' . http_build_query($params);
     }
-}
+}   
