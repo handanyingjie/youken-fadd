@@ -117,11 +117,12 @@ class FddApi3 implements FddInterface
      * @param string $customer_ident_no 证件号码
      * @param string $customer_name 姓名
      * @param string $ident_front_path 身份证证明照地址
+     * @param string $is_mini_program 是否小程序认证,默认为0;1 代表小程序认证;0:非小程序
      * @return array
      */
-    public function getPersonVerifyUrl($customer_id, $notify_url, $mobile = '', $customer_name = '', $customer_ident_no = '', $ident_front_path = '', $verified_way = '1', $page_modify = '1', $cert_flag = '1', $customer_ident_type = 0): array
+    public function getPersonVerifyUrl($customer_id, $notify_url, $mobile = '', $customer_name = '', $customer_ident_no = '', $ident_front_path = '', $verified_way = '1', $page_modify = '1', $cert_flag = '1', $customer_ident_type = 0, $is_mini_program = 0): array
     {
-        $personalParams = compact('customer_id', 'notify_url', 'verified_way', 'page_modify', 'cert_flag', 'customer_ident_no', 'customer_ident_type', 'customer_name', 'mobile', 'ident_front_path');
+        $personalParams = compact('customer_id', 'notify_url', 'verified_way', 'page_modify', 'cert_flag', 'customer_ident_no', 'customer_ident_type', 'customer_name', 'mobile', 'ident_front_path', 'is_mini_program');
         $msg_digest = $this->getMsgDigest($personalParams);
         $params = array_merge($this->getCommonParams($msg_digest) , $personalParams);
         return $this->curl->sendRequest($this->baseUrl . 'get_person_verify_url' . '.api', 'post', $params);
