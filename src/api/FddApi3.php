@@ -496,9 +496,10 @@ class FddApi3 implements FddInterface
      * @param string $return_url 页面跳转URL（签署结果同步通知）
      * @param string $notify_url 页面跳转URL（签署结果异步通知）
      * @param string $sign_keyword
+     * @param string $open_environment 0、跳转h5;（默认）1、支持在客户小程序path中跳转,path的写法如 /page/page1; 2、跳转法大大公证处小程序
      * @return string
      */
-    public function extSign($transaction_id, $contract_id, $customer_id, $doc_title, $return_url = '', $sign_keyword = '',$notify_url=''): string
+    public function extSign($transaction_id, $contract_id, $customer_id, $doc_title, $return_url = '', $sign_keyword = '',$notify_url='', $open_environment = 0): string
     {
         $msg_digest = base64_encode(
             strtoupper(
@@ -522,6 +523,7 @@ class FddApi3 implements FddInterface
                 'return_url'     => $return_url,
                 'notify_url'     => $notify_url,
                 'sign_keyword'   => $sign_keyword,
+                'open_environment' => $open_environment
             ];
         return $this->baseUrl . 'extsign' . '.api' . '?' . http_build_query($params);
     }
